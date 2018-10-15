@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>juniper</title>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/lodash.min.js"></script>
+
+<script type="text/javascript">
+
+items = [];
+
+var text = $("#texttosend");
+
+function updateList() {
+	$("#my-list").html("");	
+	items.forEach(function (new_text, i) {
+		
+		var listTemplate = _.template("<li><%=text%></li>");
+		
+		$("#my-list").append(listTemplate({text: new_text})); // here we pass new_text into li text above aftere appending
+	}); 
+	
+}
+
+
+function getListItems() {
+	$.ajax({
+        url : 'todo',
+        dataType : 'json',
+        success : function(r) {
+        	items = r;
+   			updateList();
+        }
+    });
+}
+
+
+function sendListItem() {
+    var s = $("#texttosend").val();
+    $.post("results", { texttosend: s}, function() {
+    	getListItems();
+    });
+}
+
+
+$(document).ready(function () {	
+	$("#send-item").on('click', function () {
+		sendListItem();
+	});
+});
+</script>
+</head>
+<body>
+<h2>Input Streams</h2>
+
+<p>
+<a href="todo">results</a>
+</p>
+
+<h1 id="res">Your result:</h1>
+<ul id="my-list"></ul>
+
+
+Enter your text: <input type="text" id="texttosend"><br>
+<button id="send-item" type="button" >Submit</button>
+
+
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>juniper</title>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/lodash.min.js"></script>
+
+<script type="text/javascript">
+items = [];
+
+var text = $("#texttosend");
+
+function updateList() {
+	$("#my-list").html("");	
+	items.forEach(function (todo, i) {
+		var listTemplate = _.template("<li><%=text%><button onclick=edit(<%= index %>)>Edit</button> <button onclick=remove(<%= index %>)>Delete</button></li>");
+		$("#my-list").append(listTemplate({text: todo, index: i}));
+	}); 
+	
+	/* items.map((item, index, val) => {
+		console.log("item: ", item, index, val);
+	}) */
+}
+
+function remove(index) {
+	console.log("YEEE", index);
+	 $.post("todo", { texttoremove: index}, function() {
+		 getListItems();
+	 });
+}
+
+function getListItems() {
+	$.ajax({
+        url : 'todo',
+        dataType : 'json',
+        success : function(r) {
+        	console.log(r);
+        	items = r;
+        	console.log(items);
+        	updateList();
+        }
+    });
+}
+
+function sendListItem() {
+    var s = $("#texttosend").val();
+    $.post("todo", { texttosend: s}, function() {
+    	getListItems();
+    });
+}
+
+
+
+function edit(index) {
+	var newvalue = prompt("Enter new value");
+	console.log("newvalue: ", newvalue);
+    $.post("todo", { toedit: index , resultval: newvalue}, function() {
+    	getListItems();
+    });
+}
+
+$(document).ready(function () {	
+	$("#my-list").append("<li>test");
+	getListItems();
+	
+	$("#send-item").on('click', function () {
+		sendListItem();
+	});
+	
+	$("#delete-item").on('click', function () {
+		deleteItem();
+	});
+	
+	$("#edit-item").on('click', function () {
+		editItem();
+	});
+});
+</script>
+</head>
+<body>
+<h2>My Todo</h2>
+<p>
+<a href="todo">Todo Servlet</a>
+</p>
+
+<ul id="my-list"></ul>
+Enter your text: <input type="text" id="texttosend"><br>
+<button id="send-item" type="button" >Submit</button>
+<button id="delete-item" type="button" >Delete</button>
+
+ <button id="edit-item" type="button" >Edit</button>
+
+</body>
+</html> -->
+
+
